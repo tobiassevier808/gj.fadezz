@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Dashboard - GJ Fadezz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Barber Dashboard</h1>
+            <p>Manage your weekly schedule and appointments</p>
+            <a href="index.html" class="customer-link">Customer Booking View</a>
+        </header>
+
+        <main>
+            <section class="schedule-management">
+                <h2>Weekly Schedule Management</h2>
+                
+                <div class="week-selector">
+                    <button id="prevWeek" class="btn-secondary">&lt; Previous Week</button>
+                    <span id="weekDisplay"></span>
+                    <button id="nextWeek" class="btn-secondary">Next Week &gt;</button>
+                </div>
+
+                <div class="schedule-grid">
+                    <div class="day-column" data-day="monday">
+                        <h3>Monday</h3>
+                        <div class="time-slots" id="monday-slots"></div>
+                        <button class="add-slot-btn" data-day="monday">+ Add Time Slot</button>
+                    </div>
+                    <div class="day-column" data-day="tuesday">
+                        <h3>Tuesday</h3>
+                        <div class="time-slots" id="tuesday-slots"></div>
+                        <button class="add-slot-btn" data-day="tuesday">+ Add Time Slot</button>
+                    </div>
+                    <div class="day-column" data-day="wednesday">
+                        <h3>Wednesday</h3>
+                        <div class="time-slots" id="wednesday-slots"></div>
+                        <button class="add-slot-btn" data-day="wednesday">+ Add Time Slot</button>
+                    </div>
+                    <div class="day-column" data-day="thursday">
+                        <h3>Thursday</h3>
+                        <div class="time-slots" id="thursday-slots"></div>
+                        <button class="add-slot-btn" data-day="thursday">+ Add Time Slot</button>
+                    </div>
+                    <div class="day-column" data-day="friday">
+                        <h3>Friday</h3>
+                        <div class="time-slots" id="friday-slots"></div>
+                        <button class="add-slot-btn" data-day="friday">+ Add Time Slot</button>
+                    </div>
+                    <div class="day-column" data-day="saturday">
+                        <h3>Saturday</h3>
+                        <div class="time-slots" id="saturday-slots"></div>
+                        <button class="add-slot-btn" data-day="saturday">+ Add Time Slot</button>
+                    </div>
+                    <div class="day-column" data-day="sunday">
+                        <h3>Sunday</h3>
+                        <div class="time-slots" id="sunday-slots"></div>
+                        <button class="add-slot-btn" data-day="sunday">+ Add Time Slot</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="appointments-list">
+                <h2>Today's Appointments</h2>
+                <div id="todayAppointments" class="appointments-container">
+                    <p class="no-appointments">No appointments scheduled for today.</p>
+                </div>
+            </section>
+
+            <section class="upcoming-appointments">
+                <h2>Upcoming Appointments</h2>
+                <div id="upcomingAppointments" class="appointments-container">
+                    <p class="no-appointments">No upcoming appointments.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 GJ Fadezz Barbershop. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Time Slot Modal -->
+    <div id="timeSlotModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Time Slot</h2>
+            <form id="timeSlotForm">
+                <div class="form-group">
+                    <label for="slotTime">Time:</label>
+                    <input type="time" id="slotTime" name="slotTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="slotDuration">Duration (minutes):</label>
+                    <select id="slotDuration" name="slotDuration" required>
+                        <option value="30">30 minutes</option>
+                        <option value="45">45 minutes</option>
+                        <option value="60">60 minutes</option>
+                        <option value="90">90 minutes</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Add Slot</button>
+                <button type="button" onclick="closeTimeSlotModal()" class="btn-secondary">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointment Details Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Appointment Details</h2>
+            <div id="appointmentDetails"></div>
+            <div class="modal-actions">
+                <button id="completeAppointment" class="btn-primary">Mark Complete</button>
+                <button id="cancelAppointment" class="btn-danger">Cancel Appointment</button>
+                <button onclick="closeAppointmentModal()" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

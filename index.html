@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Appointment - GJ Fadezz Barbershop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GJ Fadezz Barbershop</h1>
+            <p>Professional barber services - Book your appointment today</p>
+        </header>
+
+        <main>
+            <section class="booking-form">
+                <h2>Book Your Appointment</h2>
+                
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="customerName">Your Name:</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerPhone">Phone Number:</label>
+                        <input type="tel" id="customerPhone" name="customerPhone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerEmail">Email:</label>
+                        <input type="email" id="customerEmail" name="customerEmail" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Services:</label>
+                        <div class="services">
+                            <div class="service-item">
+                                <input type="checkbox" id="haircut" name="services" value="haircut" data-price="30">
+                                <label for="haircut">Haircut - $30</label>
+                            </div>
+                            <div class="service-item">
+                                <input type="checkbox" id="designs" name="services" value="designs" data-price="5">
+                                <label for="designs">Designs - +$5</label>
+                            </div>
+                            <div class="service-item">
+                                <input type="checkbox" id="beard" name="services" value="beard" data-price="10">
+                                <label for="beard">Beard - +$10</label>
+                            </div>
+                            <div class="service-item">
+                                <input type="checkbox" id="afterHours" name="services" value="afterHours" data-price="40">
+                                <label for="afterHours">After Hours Haircut - $40</label>
+                            </div>
+                            <div class="service-item">
+                                <input type="checkbox" id="houseCall" name="services" value="houseCall" data-price="50">
+                                <label for="houseCall">House Call Haircut - $50</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentDate">Preferred Date:</label>
+                        <input type="date" id="appointmentDate" name="appointmentDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeSlot">Available Time Slots:</label>
+                        <select id="timeSlot" name="timeSlot" required>
+                            <option value="">Select a time slot</option>
+                        </select>
+                    </div>
+
+                    <div class="price-display">
+                        <h3>Total Price: $<span id="totalPrice">0</span></h3>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Book Appointment</button>
+                </form>
+            </section>
+
+            <section class="pricing-info">
+                <h2>Our Services & Pricing</h2>
+                <div class="pricing-grid">
+                    <div class="price-card">
+                        <h3>Regular Haircut</h3>
+                        <p class="price">$30</p>
+                        <p>Professional cut and styling</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>Hair Designs</h3>
+                        <p class="price">+$5</p>
+                        <p>Custom patterns and designs</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>Beard Trim</h3>
+                        <p class="price">+$10</p>
+                        <p>Professional beard styling</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>After Hours</h3>
+                        <p class="price">$40</p>
+                        <p>Evening appointments</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>House Call</h3>
+                        <p class="price">$50</p>
+                        <p>We come to you</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 GJ Fadezz Barbershop. All rights reserved.</p>
+            <a href="barber.html" class="barber-link">Barber Login</a>
+        </footer>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Appointment Confirmed!</h2>
+            <div id="confirmationDetails"></div>
+            <button onclick="closeModal()" class="btn-primary">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
