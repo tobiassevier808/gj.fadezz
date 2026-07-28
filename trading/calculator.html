@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Position sizer and pre-trade checklist for a rules-based swing trading account.">
+<meta name="theme-color" content="#0F5E68">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sizer">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0}
+</style>
+<title>Position Sizer</title>
+
+<style>
+  /* ── Tokens ─────────────────────────────────────────────
+     Palette: petrol accent (#0F5E68) against cool-slate neutrals.
+     Semantic go/cap/stop kept strictly separate from the accent. */
+  :root {
+    --paper:  #E9EBEA;
+    --panel:  #F7F8F7;
+    --panel2: #FDFDFD;
+    --line:   #CFD4D3;
+    --line2:  #E1E5E4;
+    --ink:    #171A1C;
+    --ink2:   #4C5457;
+    --ink3:   #77807F;
+    --accent: #0F5E68;
+    --accent-soft: #DCE9EA;
+    --ok:     #35714A;
+    --ok-bg:  #DEEBE1;
+    --warn:   #9A6D0C;
+    --warn-bg:#F3E7CC;
+    --stop:   #A8352A;
+    --stop-bg:#F4DEDB;
+    --shadow: 0 1px 2px rgba(23,26,28,.06), 0 6px 18px -10px rgba(23,26,28,.28);
+
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:  #101314;
+      --panel:  #191D1F;
+      --panel2: #1F2426;
+      --line:   #2E3538;
+      --line2:  #232A2C;
+      --ink:    #E8ECEB;
+      --ink2:   #A3ADAC;
+      --ink3:   #74807F;
+      --accent: #48A7B2;
+      --accent-soft: #163336;
+      --ok:     #6BBE87;
+      --ok-bg:  #17301F;
+      --warn:   #D9A63C;
+      --warn-bg:#33280F;
+      --stop:   #E2796C;
+      --stop-bg:#3A1D19;
+      --shadow: 0 1px 2px rgba(0,0,0,.5), 0 6px 20px -12px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#E9EBEA; --panel:#F7F8F7; --panel2:#FDFDFD; --line:#CFD4D3; --line2:#E1E5E4;
+    --ink:#171A1C; --ink2:#4C5457; --ink3:#77807F;
+    --accent:#0F5E68; --accent-soft:#DCE9EA;
+    --ok:#35714A; --ok-bg:#DEEBE1; --warn:#9A6D0C; --warn-bg:#F3E7CC; --stop:#A8352A; --stop-bg:#F4DEDB;
+    --shadow: 0 1px 2px rgba(23,26,28,.06), 0 6px 18px -10px rgba(23,26,28,.28);
+  }
+  :root[data-theme="dark"] {
+    --paper:#101314; --panel:#191D1F; --panel2:#1F2426; --line:#2E3538; --line2:#232A2C;
+    --ink:#E8ECEB; --ink2:#A3ADAC; --ink3:#74807F;
+    --accent:#48A7B2; --accent-soft:#163336;
+    --ok:#6BBE87; --ok-bg:#17301F; --warn:#D9A63C; --warn-bg:#33280F; --stop:#E2796C; --stop-bg:#3A1D19;
+    --shadow: 0 1px 2px rgba(0,0,0,.5), 0 6px 20px -12px rgba(0,0,0,.8);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.45;
+    padding: 20px 16px 56px;
+  }
+  .wrap { max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── Header ── */
+  .masthead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 2px; }
+  .masthead h1 {
+    margin: 0; font-size: 19px; font-weight: 650; letter-spacing: -.01em;
+  }
+  .masthead .sub {
+    font-family: var(--mono); font-size: 11px; color: var(--ink3);
+    letter-spacing: .04em; white-space: nowrap;
+  }
+
+  /* ── Panels ── */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .panel-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line2);
+    background: var(--panel2);
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ink3);
+  }
+
+  /* ── Inputs ── */
+  .fields { display: flex; flex-direction: column; }
+  .field {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line2);
+  }
+  .field:last-child { border-bottom: 0; }
+  .field label { flex: 1; font-size: 14px; color: var(--ink2); }
+  .field .hint { display: block; font-size: 11px; color: var(--ink3); }
+  .field .money { display: flex; align-items: center; gap: 3px; }
+  .field .money::before {
+    content: "$"; font-family: var(--mono); font-size: 15px; color: var(--ink3);
+  }
+  input[type="text"] {
+    width: 104px; padding: 9px 10px; text-align: right;
+    font-family: var(--mono); font-size: 16px; font-weight: 600; color: var(--ink);
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="text"]:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  /* segmented risk control */
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .seg button {
+    appearance: none; border: 0; cursor: pointer;
+    padding: 9px 13px; min-width: 46px;
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    background: var(--panel2); color: var(--ink2);
+    border-right: 1px solid var(--line);
+  }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  :root[data-theme="dark"] .seg button[aria-pressed="true"],
+  .seg button[aria-pressed="true"] { color: var(--panel); }
+  .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  /* ── Readout ── */
+  .readout { position: relative; padding: 16px 14px 14px 18px; }
+  .readout::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--state); transition: background .18s ease;
+  }
+  .hero { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+  .hero .n {
+    font-family: var(--mono); font-size: 42px; font-weight: 700; line-height: .95;
+    letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--ink);
+  }
+  .hero .unit { font-family: var(--mono); font-size: 13px; color: var(--ink3); padding-bottom: 4px; }
+  .verdict {
+    margin-left: auto; padding: 4px 9px; border-radius: 3px;
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    background: var(--state-bg); color: var(--state);
+  }
+  .msg { margin-top: 8px; font-size: 13px; color: var(--ink2); }
+  .msg strong { color: var(--state); font-weight: 600; }
+
+  /* gauge */
+  .gauge { margin-top: 14px; }
+  .gauge-track {
+    position: relative; height: 7px; border-radius: 4px;
+    background: var(--line2); border: 1px solid var(--line2); overflow: hidden;
+  }
+  .gauge-fill {
+    height: 100%; background: var(--state); width: 0;
+    transition: width .22s ease, background .18s ease;
+  }
+  .gauge-labels {
+    display: flex; justify-content: space-between; margin-top: 5px;
+    font-family: var(--mono); font-size: 10px; color: var(--ink3);
+    letter-spacing: .04em; font-variant-numeric: tabular-nums;
+  }
+
+  /* stat grid */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line2);
+  }
+  .stat { padding: 10px 12px; border-right: 1px solid var(--line2); }
+  .stat:last-child { border-right: 0; }
+  .stat .k {
+    font-family: var(--mono); font-size: 9px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ink3);
+  }
+  .stat .v {
+    font-family: var(--mono); font-size: 16px; font-weight: 600; margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .v.flag { color: var(--stop); }
+
+  /* ── Checklist ── */
+  .check { display: flex; flex-direction: column; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 11px 14px; cursor: pointer;
+    border-bottom: 1px solid var(--line2);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .check-item:last-of-type { border-bottom: 0; }
+  .check-item input { position: absolute; opacity: 0; pointer-events: none; }
+  .box {
+    flex: none; width: 20px; height: 20px; margin-top: 1px;
+    border: 1.5px solid var(--line); border-radius: 3px;
+    background: var(--panel2);
+    display: grid; place-items: center;
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .box::after {
+    content: ""; width: 10px; height: 6px; margin-top: -2px;
+    border-left: 2px solid var(--panel); border-bottom: 2px solid var(--panel);
+    transform: rotate(-45deg) scale(0); transition: transform .12s ease;
+  }
+  .check-item input:checked + .box { background: var(--ok); border-color: var(--ok); }
+  .check-item input:checked + .box::after { transform: rotate(-45deg) scale(1); }
+  .check-item input:focus-visible + .box { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .check-item .txt { font-size: 13.5px; color: var(--ink2); }
+  .check-item input:checked ~ .txt { color: var(--ink3); }
+  .check-item .num {
+    font-family: var(--mono); font-size: 11px; color: var(--ink3);
+    flex: none; width: 15px; padding-top: 2px; font-variant-numeric: tabular-nums;
+  }
+
+  .gate {
+    padding: 12px 14px; border-top: 1px solid var(--line2);
+    display: flex; align-items: center; gap: 10px;
+    background: var(--gate-bg, var(--panel2));
+  }
+  .gate .label {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--gate-fg, var(--ink3));
+  }
+  .gate .note { font-size: 12px; color: var(--ink3); margin-left: auto; text-align: right; }
+
+  .foot {
+    font-size: 11.5px; color: var(--ink3); line-height: 1.5;
+    padding: 0 2px;
+  }
+  .foot a { color: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>Position Sizer</h1>
+    <span class="sub">RULES.md &middot; v1</span>
+  </header>
+
+  <!-- ── Trade inputs ── -->
+  <section class="panel">
+    <div class="panel-head"><span class="eyebrow">Trade</span></div>
+    <div class="fields">
+      <div class="field">
+        <label for="acct">Account size</label>
+        <span class="money"><input id="acct" type="text" inputmode="decimal" value="1000"></span>
+      </div>
+      <div class="field">
+        <label for="risk">Risk per trade
+          <span class="hint" id="riskAmt">$20.00 &middot; 1R</span>
+        </label>
+        <div class="seg" role="group" aria-label="Risk percent">
+          <button type="button" data-risk="0.01" aria-pressed="false">1%</button>
+          <button type="button" data-risk="0.015" aria-pressed="false">1.5%</button>
+          <button type="button" data-risk="0.02" aria-pressed="true">2%</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="entry">Entry price</label>
+        <span class="money"><input id="entry" type="text" inputmode="decimal" placeholder="0.00"></span>
+      </div>
+      <div class="field">
+        <label for="stop">Stop price
+          <span class="hint">max 8% below entry</span>
+        </label>
+        <span class="money"><input id="stop" type="text" inputmode="decimal" placeholder="0.00"></span>
+      </div>
+      <div class="field">
+        <label for="heat">Open risk already on
+          <span class="hint">sum of risk in current positions</span>
+        </label>
+        <span class="money"><input id="heat" type="text" inputmode="decimal" value="0"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Readout ── -->
+  <section class="panel" id="readout" style="--state: var(--ink3); --state-bg: var(--line2);">
+    <div class="readout">
+      <div class="hero">
+        <span class="n" id="shares">—</span>
+        <span class="unit">shares</span>
+        <span class="verdict" id="verdict">Awaiting</span>
+      </div>
+      <p class="msg" id="msg">Enter an entry and stop price.</p>
+      <div class="gauge">
+        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
+        <div class="gauge-labels">
+          <span>POSITION SIZE</span>
+          <span id="capLabel">CAP $300</span>
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="k">Position</div>
+        <div class="v" id="posVal">—</div>
+      </div>
+      <div class="stat">
+        <div class="k">Stop dist</div>
+        <div class="v" id="stopVal">—</div>
+      </div>
+      <div class="stat">
+        <div class="k">Heat after</div>
+        <div class="v" id="heatVal">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Pre-trade checklist ── -->
+  <section class="panel">
+    <div class="panel-head">
+      <span class="eyebrow">Pre-trade checklist</span>
+      <span class="eyebrow" id="checkCount">0 / 8</span>
+    </div>
+    <div class="check" id="check">
+      <label class="check-item"><span class="num">1</span><input type="checkbox"><span class="box"></span><span class="txt">Market gate green — SPY above 50d, 50d above 200d</span></label>
+      <label class="check-item"><span class="num">2</span><input type="checkbox"><span class="box"></span><span class="txt">Above 50d &amp; 200d MA, within 25% of the 52-week high</span></label>
+      <label class="check-item"><span class="num">3</span><input type="checkbox"><span class="box"></span><span class="txt">Outperforming SPY over the last 3 months</span></label>
+      <label class="check-item"><span class="num">4</span><input type="checkbox"><span class="box"></span><span class="txt">Volume &gt; 1M/day, price &gt; $5, no recent hype cycle</span></label>
+      <label class="check-item"><span class="num">5</span><input type="checkbox"><span class="box"></span><span class="txt">Stop sits at a real chart level, not a round number</span></label>
+      <label class="check-item"><span class="num">6</span><input type="checkbox"><span class="box"></span><span class="txt">Earnings confirmed more than 10 trading days out</span></label>
+      <label class="check-item"><span class="num">7</span><input type="checkbox"><span class="box"></span><span class="txt">Fewer than 4 positions open, none correlated with this</span></label>
+      <label class="check-item"><span class="num">8</span><input type="checkbox"><span class="box"></span><span class="txt">Thesis and invalidation written down before entry</span></label>
+    </div>
+    <div class="gate" id="gate">
+      <span class="label" id="gateLabel">Not cleared</span>
+      <span class="note" id="gateNote">Complete the checklist</span>
+    </div>
+  </section>
+
+  <p class="foot">
+    Sizing follows <strong>shares = risk &divide; (entry &minus; stop)</strong>. Position capped at 30% of the
+    account; portfolio heat capped at 6%. Place the stop order at the same time as the buy.
+    Educational tool, not financial advice.
+  </p>
+
+</div>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const acct = $('acct'), entry = $('entry'), stop = $('stop'), heat = $('heat');
+  const readout = $('readout');
+  const num = el => { const v = parseFloat(String(el.value).replace(/[^0-9.]/g, '')); return isFinite(v) ? v : 0; };
+  const money = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  let riskPct = 0.02;
+
+  // restore prefs
+  try {
+    const saved = JSON.parse(localStorage.getItem('sizer') || '{}');
+    if (saved.acct) acct.value = saved.acct;
+    if (saved.heat) heat.value = saved.heat;
+    if (saved.risk) riskPct = saved.risk;
+  } catch (e) {}
+
+  document.querySelectorAll('.seg button').forEach(b => {
+    b.setAttribute('aria-pressed', String(parseFloat(b.dataset.risk) === riskPct));
+    b.addEventListener('click', () => {
+      riskPct = parseFloat(b.dataset.risk);
+      document.querySelectorAll('.seg button').forEach(o =>
+        o.setAttribute('aria-pressed', String(o === b)));
+      calc();
+    });
+  });
+
+  const STATES = {
+    idle: ['var(--ink3)', 'var(--line2)'],
+    ok:   ['var(--ok)',   'var(--ok-bg)'],
+    warn: ['var(--warn)', 'var(--warn-bg)'],
+    bad:  ['var(--stop)', 'var(--stop-bg)']
+  };
+  function setState(k) {
+    readout.style.setProperty('--state', STATES[k][0]);
+    readout.style.setProperty('--state-bg', STATES[k][1]);
+  }
+
+  let mathOK = false;
+
+  function calc() {
+    const A = num(acct), E = num(entry), S = num(stop), H = num(heat);
+    const riskDollars = A * riskPct;
+    const posCap  = A * 0.30;
+    const heatCap = A * 0.06;
+
+    $('riskAmt').textContent = money(riskDollars) + ' · 1R';
+    $('capLabel').textContent = 'CAP ' + money(posCap).replace('.00', '');
+
+    const reset = (verdict, message, state) => {
+      mathOK = false;
+      $('shares').textContent = '—';
+      $('verdict').textContent = verdict;
+      $('msg').innerHTML = message;
+      $('posVal').textContent = '—';
+      $('stopVal').textContent = '—';
+      $('heatVal').textContent = '—';
+      $('gaugeFill').style.width = '0%';
+      setState(state);
+      gate();
+    };
+
+    if (!A) return reset('Awaiting', 'Enter your account size.', 'idle');
+    if (!E || !S) return reset('Awaiting', 'Enter an entry and stop price.', 'idle');
+    if (S >= E) return reset('Invalid', '<strong>Stop must be below the entry price.</strong>', 'bad');
+
+    const riskPerShare = E - S;
+    const stopPct = riskPerShare / E;
+    $('stopVal').textContent = (stopPct * 100).toFixed(1) + '%';
+    $('stopVal').classList.toggle('flag', stopPct > 0.08);
+
+    if (stopPct > 0.08) {
+      mathOK = false;
+      $('shares').textContent = '—';
+      $('verdict').textContent = 'No trade';
+      $('msg').innerHTML = '<strong>Stop is ' + (stopPct * 100).toFixed(1) +
+        '% away — the limit is 8%.</strong> Find a tighter entry near the pivot. Never widen a stop to make the size work.';
+      $('posVal').textContent = '—';
+      $('heatVal').textContent = '—';
+      $('gaugeFill').style.width = '100%';
+      setState('bad');
+      return gate();
+    }
+
+    let shares = riskDollars / riskPerShare;
+    let position = shares * E;
+    let actualRisk = riskDollars;
+    let state = 'ok', verdict = 'Sized', note = '';
+
+    if (position > posCap) {
+      position = posCap;
+      shares = position / E;
+      actualRisk = shares * riskPerShare;
+      state = 'warn'; verdict = 'Capped';
+      note = 'Position capped at 30% of the account. Risk drops to <strong>' +
+             money(actualRisk) + '</strong> instead of ' + money(riskDollars) + '.';
+    } else if (position < 50) {
+      mathOK = false;
+      $('shares').textContent = shares.toFixed(2);
+      $('verdict').textContent = 'Too small';
+      $('msg').innerHTML = '<strong>Position is only ' + money(position) +
+        '.</strong> Below $50 the spread and slippage eat the trade. Skip it.';
+      $('posVal').textContent = money(position);
+      $('heatVal').textContent = '—';
+      $('gaugeFill').style.width = '2%';
+      setState('bad');
+      return gate();
+    }
+
+    const heatAfter = H + actualRisk;
+    $('heatVal').textContent = money(heatAfter);
+    const heatBust = heatAfter > heatCap + 0.005;
+    $('heatVal').classList.toggle('flag', heatBust);
+
+    if (heatBust) {
+      mathOK = false;
+      $('shares').textContent = shares.toFixed(2);
+      $('verdict').textContent = 'No trade';
+      $('msg').innerHTML = '<strong>Portfolio heat would hit ' + money(heatAfter) +
+        ', over the ' + money(heatCap) + ' limit.</strong> Wait for an existing position to close or move its stop to breakeven.';
+      $('posVal').textContent = money(position);
+      $('gaugeFill').style.width = Math.min(100, position / posCap * 100) + '%';
+      setState('bad');
+      return gate();
+    }
+
+    mathOK = true;
+    $('shares').textContent = shares.toFixed(2);
+    $('verdict').textContent = verdict;
+    $('posVal').textContent = money(position);
+    $('msg').innerHTML = note ||
+      ('Risking <strong>' + money(actualRisk) + '</strong> — ' + (position / A * 100).toFixed(0) +
+       '% of the account at stake on an ' + (stopPct * 100).toFixed(1) + '% stop.');
+    $('gaugeFill').style.width = Math.min(100, position / posCap * 100) + '%';
+    setState(state);
+
+    try {
+      localStorage.setItem('sizer', JSON.stringify({ acct: acct.value, heat: heat.value, risk: riskPct }));
+    } catch (e) {}
+    gate();
+  }
+
+  function gate() {
+    const boxes = document.querySelectorAll('#check input');
+    const done = [...boxes].filter(b => b.checked).length;
+    $('checkCount').textContent = done + ' / ' + boxes.length;
+    const g = $('gate');
+    if (mathOK && done === boxes.length) {
+      g.style.setProperty('--gate-bg', 'var(--ok-bg)');
+      g.style.setProperty('--gate-fg', 'var(--ok)');
+      $('gateLabel').textContent = 'Cleared to trade';
+      $('gateNote').textContent = 'Place the stop with the buy';
+    } else {
+      g.style.setProperty('--gate-bg', 'var(--panel2)');
+      g.style.setProperty('--gate-fg', 'var(--ink3)');
+      $('gateLabel').textContent = 'Not cleared';
+      $('gateNote').textContent = !mathOK
+        ? 'Sizing does not pass'
+        : (boxes.length - done) + ' item' + (boxes.length - done === 1 ? '' : 's') + ' left';
+    }
+  }
+
+  [acct, entry, stop, heat].forEach(el => el.addEventListener('input', calc));
+  document.querySelectorAll('#check input').forEach(b => b.addEventListener('change', gate));
+  calc();
+})();
+</script>
+</body>
+</html>
