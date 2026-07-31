@@ -74,7 +74,7 @@ when there's more capital behind it. Trying to turn $1,000 into meaningful money
 | [calculator.html](calculator.html) | Position sizer + pre-trade checklist (works offline) |
 | [templates/watchlist.md](templates/watchlist.md) | Watchlist format |
 | [templates/journal.md](templates/journal.md) | Trade journal format |
-| [skills/](skills/) | Claude Code skills (if you ever work from a laptop) |
+| [skills/](skills/) | 6 Claude skills — phone-installable zips in `skills/dist/`, auto-loaded in Claude Code |
 | [../research/stock-trading-with-claude.md](../research/stock-trading-with-claude.md) | The full research report behind all of this |
 
 ---

@@ -112,6 +112,38 @@ pre-trade checklist in one screen.
 
 ---
 
+## Step 6 — Install the six skills (5 min, recommended)
+
+Six custom skills live in this repo at `trading/skills/dist/` as ready-to-upload
+zip files. They teach Claude your exact workflow so one word triggers the whole
+procedure ("run the market gate", "plan NVDA", "log this trade").
+
+1. Open this repo on GitHub in your phone browser → `trading/skills/dist/`
+2. Download each `.zip` (tap the file → ⋯ menu → Download)
+3. Go to **claude.ai → Settings → Skills → Upload skill** and upload all six
+4. They now work in your `Stock Helper` project automatically
+
+| Skill | Trigger it with |
+|---|---|
+| market-regime-gate | "run the market gate" |
+| screen-candidates | "screen these: [tickers]" |
+| breakout-trade-planner | "plan [TICKER]" |
+| pre-trade-check | "check this trade: [entry/stop]" |
+| trade-journal | "log this trade" / "I sold X" |
+| weekly-review | "weekly review" + paste journal |
+
+These are built to your RULES.md, so they enforce the $20 risk / 4 positions /
+$60 heat numbers. If your account size ever changes, update RULES.md in your
+project knowledge — the skills defer to it.
+
+*Want more?* They're modeled on the community pack
+[tradermonty/claude-trading-skills](https://github.com/tradermonty/claude-trading-skills)
+(60+ skills, MIT license) — browse it on your phone if you want extras like the
+CANSLIM screener or signal postmortems. Skip anything options- or day-trading
+related; your rules ban both.
+
+---
+
 ## You're set. The daily loop:
 
 **Evening (5 min):** tap the Finviz bookmark → copy the top ~10 tickers → open the
